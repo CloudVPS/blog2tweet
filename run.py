@@ -33,7 +33,7 @@ class sqlitedict(object):
 def post(entry, user, password):
     t = 140
     t = t - len(entry.id) - 1
-    title = 'Nieuwe XLS blogpost: '
+    title = 'Nieuwe xlshosting blogpost: '
     title = title + entry.title[0:t-len(title)] + " "
     title = title + entry.id
     api = twitter.Api(username=user, password=password)
