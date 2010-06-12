@@ -35,7 +35,10 @@ def post(entry, user, password):
     t = t - len(entry.id) - 1
     title = 'Nieuwe xlshosting blogpost: '
     title = title + entry.title[0:t-len(title)] + " "
+
+    # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
     title = title + entry.id
+
     api = twitter.Api(username=user, password=password)
     print "posting [%s]" % title.encode("ascii","replace")
     api.PostUpdate(title)
