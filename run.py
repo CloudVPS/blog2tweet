@@ -37,7 +37,7 @@ def post(entry, user, password):
     title = title + entry.title[0:t-len(title)] + " "
     title = title + entry.id
     api = twitter.Api(username=user, password=password)
-    print "posting [%s]" % title
+    print "posting [%s]" % title.encode("ascii","replace")
     api.PostUpdate(title)
 
 config = json.load(file('config.json'))
@@ -50,7 +50,7 @@ for e in reversed(feed.entries):
         except:
             print "post %s failed" % e.id
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_exc(1)
+            traceback.print_exc()
             continue
         seen[e.id]=1
 
