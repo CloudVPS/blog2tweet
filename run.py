@@ -59,9 +59,7 @@ for e in reversed(feed.entries):
                     seen[e.id]=1
                     continue
             except:
-                pass
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            traceback.print_exc()
-            continue
+                print ex
+                continue
         seen[e.id]=1
 
