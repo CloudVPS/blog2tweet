@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import twitter, feedparser, sqlite3, json, traceback, sys
+import twitter, feedparser, sqlite3, json, traceback, sys, json
 
 class sqlitedict(object):
     """sqlite table-backed dict emulation"""
@@ -50,8 +50,16 @@ for e in reversed(feed.entries):
     if not e.id in seen:
         try:
             post(e, config["twitteruser"], config["twitterpassword"])
-        except:
+        except Exception as ex:
             print "post %s failed" % e.id
+            try:
+                twittererror = json.loads(ex.read())
+                if twittererror["error"] == "Status is a duplicate.":
+                    print "duplicate! marking as seen anyway"
+                    seen[e.id]=1
+                    continue
+            except:
+                pass
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exc()
             continue
