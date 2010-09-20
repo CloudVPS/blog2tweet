@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import twitter, feedparser, sqlite3, json, traceback, sys, json
+import tweepy, feedparser, sqlite3, json, traceback, sys, json
 
 class sqlitedict(object):
     """sqlite table-backed dict emulation"""
@@ -30,7 +30,7 @@ class sqlitedict(object):
             return True
         return False
 
-def post(entry, user, password):
+def post(entry, config):
     t = 140
     t = t - len(entry.id) - 1
     title = 'Nieuwe xlshosting blogpost: '
@@ -39,9 +39,11 @@ def post(entry, user, password):
     # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
     title = title + entry.id
 
-    api = twitter.Api(username=user, password=password)
+    auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
+    auth.set_access_token(config['oauth_token'], config['oauth_token_secret'])
+    api = tweepy.API(auth)
     print "posting [%s]" % title.encode("ascii","replace")
-    api.PostUpdate(title)
+    api.update_status(title)
 
 config = json.load(file('config.json'))
 seen = sqlitedict(config["db"], config["table"])
@@ -49,7 +51,7 @@ feed = feedparser.parse(config["feed"])
 for e in reversed(feed.entries):
     if not e.id in seen:
         try:
-            post(e, config["twitteruser"], config["twitterpassword"])
+            post(e, config)
         except Exception as ex:
             print "post %s failed" % e.id
             try:
