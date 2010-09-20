@@ -1,1 +1,1 @@
-{"feed":"http://blog.xlshosting.nl/feed/","twitteruser":"required","twitterpassword":"required","db":"blog2tweet.db","table":"xlsblog"}
+{"feed":"http://blog.xlshosting.nl/feed","consumer_key":"xxx","consumer_secret":"yyy","oauth_token":"zzz","oauth_token_secret":"qqq", "db":"blog2tweet.db","table":"xlsblog"}
