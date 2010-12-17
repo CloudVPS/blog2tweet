@@ -33,7 +33,7 @@ class sqlitedict(object):
 def post(entry, config):
     t = 140
     t = t - len(entry.id) - 1
-    title = 'Nieuwe xlshosting blogpost: '
+    title = config["prefix"]
     title = title + entry.title[0:t-len(title)] + " "
 
     # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
@@ -45,7 +45,11 @@ def post(entry, config):
     print "posting [%s]" % title.encode("ascii","replace")
     api.update_status(title)
 
-config = json.load(file('config.json'))
+conffile = 'config.json'
+if len(sys.argv) == 2:
+	conffile=sys.argv[1]
+
+config = json.load(file(conffile))
 seen = sqlitedict(config["db"], config["table"])
 feed = feedparser.parse(config["feed"])
 for e in reversed(feed.entries):
