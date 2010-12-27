@@ -32,13 +32,22 @@ class sqlitedict(object):
 
 def post(entry, config):
     t = 140
-    t = t - len(entry.id) - 1
+    
+    # Reserve some space for the title
+    titlespace = min(15,len(entry.title))
+
+    if (len(config["prefix"]) + len(entry.link) + titlespace) <= t:
+        link = entry.link
+    else:
+        # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
+        link = entry.id
+        
+    t = t - len(link) - 1
     title = config["prefix"]
-    title = title + entry.title[0:t-len(title)] + " "
-
-    # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
-    title = title + entry.id
-
+    t = t - len(title)
+    title = title + entry.title[0:t] + " "
+    title = title + link
+   
     auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
     auth.set_access_token(config['oauth_token'], config['oauth_token_secret'])
     api = tweepy.API(auth)
