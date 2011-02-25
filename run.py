@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import tweepy, feedparser, sqlite3, json, traceback, sys, json
+import tweepy, feedparser, sqlite3, json, traceback, sys, json, textwrap
 
 class sqlitedict(object):
     """sqlite table-backed dict emulation"""
@@ -31,28 +31,28 @@ class sqlitedict(object):
         return False
 
 def post(entry, config):
-    t = 140
-    
-    # Reserve some space for the title
-    titlespace = min(50,len(entry.title))
 
-    if (len(config["prefix"]) + len(entry.link) + titlespace) <= t:
-        link = entry.link
-    else:
-        # this assumes that wordpress uses the /?p= url for the ID. Other RSS-feeds may break this assumption!
-        link = entry.id
+    message = config["prefix"]
+    message += entry.title
+    
+    linklen = min(len(entry.link),len(entry.id))
+     
+    if len(message) + linklen > 139:
+        # message is too long
+        message = textwrap.wrap(message,136)[0] + "..."
         
-    t = t - len(link) - 1
-    title = config["prefix"]
-    t = t - len(title)
-    title = title + entry.title[0:t] + " "
-    title = title + link
-   
+    message += " "
+    
+    if len(message) + len(entry.link) > 140:
+        message += entry.id
+    else:
+        message += entry.link    
+        
     auth = tweepy.OAuthHandler(config['consumer_key'], config['consumer_secret'])
     auth.set_access_token(config['oauth_token'], config['oauth_token_secret'])
     api = tweepy.API(auth)
-    print "posting [%s]" % title.encode("ascii","replace")
-    api.update_status(title)
+    print "posting [%s]" % message.encode("ascii","replace")
+    api.update_status(message)
 
 conffile = 'config.json'
 if len(sys.argv) == 2:
