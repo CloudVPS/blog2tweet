@@ -34,7 +34,7 @@ def post(entry, config):
     t = 140
     
     # Reserve some space for the title
-    titlespace = min(15,len(entry.title))
+    titlespace = min(50,len(entry.title))
 
     if (len(config["prefix"]) + len(entry.link) + titlespace) <= t:
         link = entry.link
